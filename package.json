@@ -11,7 +11,7 @@
 		"watch": "webpack --watch",
 		"serve": "webpack serve"
 	},
-	"output directory": "dist",
+	"output directory": "./dist",
 	"keywords": [],
 	"author": "TorTic",
 	"license": "ISC",
@@ -40,7 +40,10 @@
 		"webpack-dev-server": "^5.1.0"
 	},
 	"dependencies": {
+		"axios": "^1.7.9",
 		"bootstrap": "^5.3.3",
+		"i18next": "^24.0.5",
+		"lodash": "^4.17.21",
 		"on-change": "^5.0.1",
 		"yup": "^1.4.0"
 	}
