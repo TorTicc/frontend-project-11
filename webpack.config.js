@@ -17,6 +17,7 @@ const config = {
     open: true,
     host: 'localhost',
     hot: true,
+    port: 3000
   },
   plugins: [
     new HtmlWebpackPlugin({

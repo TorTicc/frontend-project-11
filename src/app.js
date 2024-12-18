@@ -13,7 +13,7 @@ const addProxy = url => {
 	proxyUrl.searchParams.append('url', url)
 	return proxyUrl.toString()
 }
-
+const timer = 5000
 export default () => {
 	yup.setLocale({
 		string: {
@@ -69,6 +69,32 @@ export default () => {
 				render(elements, initialState, i18n)
 			)
 			watching.processRequest = 'filling'
+			const updatePosts = feeds => {
+				const posts = feeds.map(({ url }) =>
+					axios
+						.get(addProxy(url))
+						.then(response => {
+							const { posts } = parser(response.data.contents)
+							const oldPosts = watching.posts.map(({ url }) => url)
+							const newPosts = posts.filter(
+								post => !oldPosts.includes(post.url)
+							)
+							const updatePosts = newPosts.map(upPost => ({
+								...upPost,
+								id: _.uniqueId(),
+							}))
+							console.log(updatePosts)
+
+							watching.posts = [...updatePosts, ...watching.posts]
+						})
+						.catch(e => {
+							throw e
+						})
+				)
+				Promise.all(posts).finally(() => {
+					setTimeout(() => updatePosts(watching.feeds), timer)
+				})
+			}
 			elements.form.addEventListener('submit', e => {
 				e.preventDefault()
 				const data = new FormData(e.target)
@@ -87,6 +113,8 @@ export default () => {
 							watching.posts.push({ ...post, id: _.uniqueId() })
 						)
 						watching.processRequest = 'send'
+
+						updatePosts(watching.feeds)
 					})
 					.catch(err => {
 						watching.error = err.message
