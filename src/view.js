@@ -127,7 +127,7 @@ const createModal = (elements, state, i18n) => {
   const activePost = state.posts.find(
     ({ id }) => id === state.uiState.currentId,
   );
-  const { title, description, link } = activePost;
+  const { titlePost, descriptionPost, link } = activePost;
   const {
     modalTitle, modalBody, modalLink, modalBtn,
   } = elements;
