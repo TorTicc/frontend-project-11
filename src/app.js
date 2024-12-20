@@ -51,7 +51,7 @@ export default () => {
     feeds: [],
     uiState: {
       currentId: '',
-      viewedId: '',
+      viewedId: new Set(),
     },
   };
   const i18n = i18next.createInstance();
@@ -106,6 +106,7 @@ export default () => {
             updatePosts(watching.feeds);
           })
           .catch((err) => {
+            watching.processRequest = 'filling';
             if (err.name === 'AxiosError') {
               watching.error = { key: 'networkError' };
             } else if (err.message === 'notRss') {
@@ -118,10 +119,10 @@ export default () => {
       elements.postsList.addEventListener('click', (e) => {
         const targetId = e.target.dataset.id;
         if (e.target.tagName === 'A') {
-          watching.uiState.viewedId = e.target.id;
+          watching.uiState.viewedId.add(e.target.id);
         }
         if (e.target.tagName === 'BUTTON') {
-          watching.uiState.viewedId = targetId;
+          watching.uiState.viewedId.add(e.target.dataset.id);
           watching.uiState.currentId = targetId;
         }
       });

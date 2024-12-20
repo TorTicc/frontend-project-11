@@ -94,7 +94,12 @@ const createPost = (i18n, state) => {
     a.setAttribute('href', link);
     a.setAttribute('target', '_blank');
     a.setAttribute('id', id);
-    a.classList.add('fw-bold');
+    if (state.uiState.viewedId.has(id)) {
+      a.classList.add('fw-normal', 'link-secondary');
+    } else {
+      a.classList.add('fw-bold');
+    }
+
     a.textContent = titlePost;
 
     button.setAttribute('type', 'button');
@@ -112,11 +117,11 @@ const createPost = (i18n, state) => {
 
 const createError = (elements, error, i18n) => {
   const { input, feedback } = elements;
-
   feedback.classList.add('text-danger');
   input.classList.add('is-invalid');
 
   feedback.textContent = i18n.t(`errors.${error.key}`);
+  elements.staticElement.button.disabled = false;
   if (error.key === 'notUrl') {
     feedback.previousElementSibling.classList.remove('text-muted');
   } else {
@@ -131,16 +136,20 @@ const createModal = (elements, state, i18n) => {
   const {
     modalTitle, modalBody, modalLink, modalBtn,
   } = elements;
-  modalTitle.textContent = title;
-  modalBody.textContent = description;
+  modalTitle.textContent = titlePost;
+  modalBody.textContent = descriptionPost;
   modalLink.textContent = i18n.t('modal.modalLink');
   modalBtn.textContent = i18n.t('modal.modalBtn');
   modalLink.setAttribute('href', link);
 };
-const touchedPost = (value) => {
-  const elem = document.getElementById(value);
-  elem.classList.remove('fw-bold');
-  elem.classList.add('fw-normal', 'link-secondary');
+const touchedPost = (state) => {
+  state.uiState.viewedId.forEach((id) => {
+    const elem = document.getElementById(id);
+    if (!elem.classList.contains('fw-normal')) {
+      elem.classList.remove('fw-bold');
+      elem.classList.add('fw-normal', 'link-secondary');
+    }
+  });
 };
 
 export default (elements, state, i18n) => (path, value) => {
@@ -160,7 +169,7 @@ export default (elements, state, i18n) => (path, value) => {
       createModal(elements, state, i18n);
       break;
     case 'uiState.viewedId':
-      touchedPost(value);
+      touchedPost(state);
       break;
     case 'processRequest':
       processRequest(elements, value, i18n);
