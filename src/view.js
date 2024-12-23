@@ -1,6 +1,8 @@
 const finishProcess = (elements, i18n) => {
-  elements.staticElement.button.disabled = false;
-  elements.feedback.textContent = i18n.t('status.success');
+  const { button } = elements.staticElement;
+  button.disabled = false;
+  const { feedback } = elements;
+  feedback.textContent = i18n.t('status.success');
   elements.feedback.classList.add('text-success');
 };
 const cleanFeedback = (elements) => {
@@ -12,10 +14,17 @@ const cleanFeedback = (elements) => {
 
 const renderStranger = (elements, i18n) => {
   Object.entries(elements.staticElement).forEach(([key, element]) => {
-    element.textContent = i18n.t(key);
+    const elem = element;
+    elem.textContent = i18n.t(key);
   });
 };
-
+const sendHandler = (elements, i18n) => {
+  elements.form.reset();
+  elements.input.focus();
+  const { button, label } = elements.staticElement;
+  button.disabled = true;
+  label.textContent = i18n.t('status.sending');
+};
 const processRequest = (elements, stateRequest, i18n) => {
   switch (stateRequest) {
     case 'filling':
@@ -23,10 +32,7 @@ const processRequest = (elements, stateRequest, i18n) => {
       break;
     case 'sending':
       cleanFeedback(elements);
-      elements.form.reset();
-      elements.input.focus();
-      elements.staticElement.button.disabled = true;
-      elements.staticElement.label.textContent = i18n.t('status.sending');
+      sendHandler(elements, i18n);
       break;
     case 'send':
       renderStranger(elements, i18n);
@@ -117,11 +123,12 @@ const createPost = (i18n, state) => {
 
 const createError = (elements, error, i18n) => {
   const { input, feedback } = elements;
+  const { button } = elements.staticElement;
   feedback.classList.add('text-danger');
   input.classList.add('is-invalid');
 
   feedback.textContent = i18n.t(`errors.${error.key}`);
-  elements.staticElement.button.disabled = false;
+  button.disabled = false;
   if (error.key === 'notUrl') {
     feedback.previousElementSibling.classList.remove('text-muted');
   } else {

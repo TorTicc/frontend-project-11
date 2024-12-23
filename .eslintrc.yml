@@ -6,10 +6,11 @@ plugins:
 
 env:
   node: true
-  jest: true
   browser: true
-
-parser: "@babel/eslint-parser"
+  
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
 
 extends:
   - "airbnb-base"
@@ -17,5 +18,3 @@ extends:
 rules:
   no-console: 0
   import/extensions: 0
-  no-underscore-dangle: 0
-  no-param-reassign: 0
